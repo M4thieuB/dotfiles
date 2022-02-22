@@ -1,0 +1,5 @@
+package bang-bang
+package colorman
+theme agnoster
+theme default
+theme pure
