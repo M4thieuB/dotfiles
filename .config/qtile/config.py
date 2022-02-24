@@ -51,7 +51,7 @@ colors = [  "#2e3440", # Background         1
 
 
 dmenu_param = dict(
-    dmenu_font = "Fira Code Medium",
+    dmenu_font = "Fira Code Medium-15",
     dmenu_prompt=">",
     background = colors[0],
     foreground= colors[6],
@@ -60,7 +60,7 @@ dmenu_param = dict(
 )
 
 
-### Start applications at start ###
+########### Start applications at start ############
 @hook.subscribe.startup_once
 def start_once():
     home = os.path.expanduser('~/.config/qtile/autostart.sh')
@@ -70,6 +70,7 @@ def start_once():
 keys = [
 
     ############### CHORDS ###############
+
     KeyChord(   [mod], "v", [
                 # More precise sound management
                 Key([], "a", lazy.spawn("amixer -q sset Master 1%-")),
@@ -104,10 +105,17 @@ keys = [
                     lazy.layout.shrink(),
                     lazy.layout.increase_nmaster(),
                     )],
-                mode="Resize"
+                mode=" Resize"
+                ),
 
-    ),
+    KeyChord(   [mod], "n", [
+                Key([],"s", lazy.spawn("dunstctl set-paused toggle")), # Active/Désactive les notif
+        #        Key([],"h", lazy.spawn("dunstctl history")) # Affiche l'historique des notif mais où? Bonne question, à travailler
+                ],
+            mode=" Notification"
+            ),
 
+############## KeyMap ################
 
     # Mute sound
     Key([], "XF86AudioMute", lazy.spawn("amixer -q sset Master toggle")),
@@ -180,16 +188,16 @@ groups = []
 # group_names = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "0",]
 
 # FOR AZERTY KEYBOARDS
-group_names = ["ampersand", "eacute", "quotedbl", "apostrophe", "parenleft", "minus", "egrave", "underscore", "ccedilla", "agrave",]
+group_names = ["ampersand", "eacute", "quotedbl", "apostrophe", "parenleft", "minus"] #, "egrave", "underscore", "ccedilla", "agrave" si jamais t'en veux plus
 
-group_labels = ["", "", "", "", "", "6 ", "7 ", "8 ", "9 ", "0",]
+group_labels = ["", "", "", "", "", ""]
 #group_labels = ["", "", "", "", "", "", "", "", "", "",]
 #group_labels = ["Web", "Edit/chat", "Image", "Gimp", "Meld", "Video", "Vb", "Files", "Mail", "Music",]
 
-group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall",]
+group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
 #group_layouts = ["monadtall", "matrix", "monadtall", "bsp", "monadtall", "matrix", "monadtall", "bsp", "monadtall", "monadtall",]
 
-group_class = ["firefox", "Atom","","discord","","","","","",""]
+group_class = ["", "Atom","firefox","discord","",""]
 
 for i in range(len(group_names)):
     groups.append(
@@ -265,27 +273,77 @@ widget_defaults = dict(
 )
 extension_defaults = widget_defaults.copy()
 
+######### Creating Widgets #########
+class Dunst(widget.base.ThreadPoolText):
+    """
+        A simple widget to display the state of the dunst notification server.
+        Widget requirements: dunstctl from the dunst package
+    """
+    defaults = [
+        ("update_interval", 1.0, "Update interval for the Dunst widget"),
+        (
+            "format", "DUNST {state}", "Dunst display format",
+        ),
+    ]
+
+    def __init__(self, **config):
+        super().__init__("", **config)
+        self.add_defaults(Dunst.defaults)
+
+    def poll(self):
+        variables = dict()
+
+        state = subprocess.check_output(["dunstctl", "is-paused"]).decode("utf-8").strip()
+        variables["state"] = "" if state == "false" else ""
+
+        return self.format.format(**variables)
+
+############# Manage what is displayed on screen ##############
 
 screens = [
     Screen(
         top=bar.Bar(
             [
+                Dunst(
+                        background=colors[0],           # Widget background color
+                        fmt="{}",                       # How to format the text
+                        font="FiraCode Nerd Font",      # Default font
+                        fontsize=15,                    # Font size. Calculated if None.
+                        foreground=colors[5],           # Foreground colour
+                        format="{state}",               # How to format the text.
+                        padding=5,                      # Padding. Calculated if None.
+                        ),
+
+                widget.TextBox(
+                        text='|',
+                        foreground=colors[6],
+                        background=colors[0],
+                        padding=0,
+                        font="Fira Code Bold",
+                        fontsize=15
+                        ),
+
                 widget.GroupBox(
                         borderwidth=2,
+                        center_aligned = True,
                         active = colors[5],
-                        inactive = colors[5],
-                        hide_unused = True,
+                        inactive = colors[0],
+                        this_current_screen_border = colors[5],
+                        block_highlight_text_color = colors[0],
+                        urgent_border = colors[3],
+                        urgent_text = colors[0],
+                        hide_unused = False,
                         foreground = colors[5],
                         background = colors[0],
-                        block_highlight_text_color = colors[5],
                         spacing = 2,
                         highlight_method = 'block',
+                        highlight_color = None,
                         rounded = True,
                         margin_x = 5,
                         margin_y = 3,
                         padding_x = 10,
                         padding_y = 5,
-                        font = "Font Awesome",
+                        font = "FiraCode Nerd Font",
                         fontsize = 15
                         ),
 
@@ -302,6 +360,8 @@ screens = [
                 widget.WindowName(
                         background=colors[0],
                         foreground = colors[6],
+                        empty_group_string='| ',
+                        format = "| {state} {name}",
                         font="Fira Code Bold",
                         fontsize=15,
                         padding = 10
@@ -312,7 +372,7 @@ screens = [
                         foreground = colors[9],
                         fmt = '{}',
                         fontsize = 15,
-                        font = "Fira Code Medium",
+                        font = "FiraCode Nerd Font Medium",
                         padding = 5
                         ),
 
@@ -354,7 +414,7 @@ screens = [
                 widget.Volume(
                         background=colors[0],
                         foreground=colors[4],
-                        font="Font Awesome",
+                        font="FiraCode Nerd Font medium",
                         fontsize=15,
                         fmt = '  {}',
                         get_volume_command=None,
@@ -380,10 +440,10 @@ screens = [
                 #         ),
                 widget.TextBox(
                         fmt = "",
-                        font = 'Font Awesome',
-                        fontsize = 30,
+                        font = 'FiraCode Nerd Font medium',
+                        fontsize = 15,
                         background=colors[0],
-                        foreground=colors[2],
+                        foreground=colors[5],
                         # mouse_callbacks={'Button1': lambda: qtile.cmd_spawn("dm-wifi \
                         #     -p '{0}' -fn '{1}' -nb '{2}' -nf '{3}' -sb '{4}' -sf '{5}'".format(
                         #     dmenu_param["dmenu_prompt"],
@@ -407,15 +467,21 @@ screens = [
 
                 widget.Battery(
                         background=colors[0],
-                        foreground=colors[2],
-                        font="Fira Code Medium",
+                        foreground=colors[5],
+                        low_background = colors[0],
+                        low_foreground = colors[3],
+                        font="FiraCode Nerd Font Medium",
                         fontsize=15,
                         battery=0,                 # Which battery should be monitored (battery number or name)
                         charge_char='',           # Character to indicate the battery is charging
                         discharge_char='',        # Character to indicate the battery is discharging
                         empty_char='',
+                        full_char = '',
+                        low_percentage = 0.2,
+                        notify_below = 22,
                         format = '{char} {percent:2.0%}', # add {hour:d}:{min:02d} for time
-                        padding=5
+                        padding=5,
+                        update_interval = 60,
                         ),
 
                 widget.TextBox(
@@ -432,7 +498,7 @@ screens = [
                         foreground=colors[6],
                         background=colors[0],
                         padding=0,
-                        font="Font Awesome",
+                        font="FiraCode Nerd Font",
                         fontsize=15
                         ),
 
