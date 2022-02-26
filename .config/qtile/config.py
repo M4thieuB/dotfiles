@@ -34,6 +34,7 @@ from libqtile import hook
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile import qtile
+from mywidget import MyBattery
 
 mod = "mod4"
 
@@ -298,6 +299,7 @@ class Dunst(widget.base.ThreadPoolText):
 
         return self.format.format(**variables)
 
+
 ############# Manage what is displayed on screen ##############
 
 screens = [
@@ -362,7 +364,7 @@ screens = [
                         foreground = colors[6],
                         empty_group_string='| ',
                         format = "| {state} {name}",
-                        font="Fira Code Bold",
+                        font="Fira Code Medium",
                         fontsize=15,
                         padding = 10
                         ),
@@ -465,7 +467,7 @@ screens = [
                 #         fontsize=37
                 #         ),
 
-                widget.Battery(
+                MyBattery(
                         background=colors[0],
                         foreground=colors[5],
                         low_background = colors[0],
@@ -478,7 +480,7 @@ screens = [
                         empty_char='',
                         full_char = '',
                         low_percentage = 0.2,
-                        notify_below = 22,
+                        notify_below = [20,10,5],      # Niveau auquel on envoie une notif par ordre décroissant
                         format = '{char} {percent:2.0%}', # add {hour:d}:{min:02d} for time
                         padding=5,
                         update_interval = 60,
