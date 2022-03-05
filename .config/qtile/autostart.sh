@@ -10,3 +10,6 @@ dunst -conf ~/.config/dunst/dunstrc &
 
 # Launch nitrogen
 nitrogen --restore &
+
+# Launch nm-applet for managing wifi connections easily in the systray widget of qtile
+nm-applet &

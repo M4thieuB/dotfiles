@@ -34,6 +34,7 @@ from libqtile import hook
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile import qtile
+# Widget modifié
 from mywidget import MyBattery
 
 mod = "mod4"
@@ -75,7 +76,8 @@ keys = [
     KeyChord(   [mod], "v", [
                 # More precise sound management
                 Key([], "a", lazy.spawn("amixer -q sset Master 1%-")),
-                Key([], "e", lazy.spawn("amixer -q sset Master 1%+"))],
+                Key([], "e", lazy.spawn("amixer -q sset Master 1%+")),
+                Key([], "p", lazy.spawn("pavucontrol"))],
                 mode=" Volume"
                 ),
 
@@ -166,12 +168,10 @@ keys = [
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "control"], "q", lazy.shutdown(), desc="Shutdown Qtile"),
+    Key([mod, "control"], "q", lazy.spawn("arcolinux-logout"), desc="Shutdown Qtile"),
 
     # Toggle fullscreen
     Key([mod], "f", lazy.window.toggle_fullscreen()),
-
-
 
     # Open dmenu
     Key([mod], 'd', lazy.run_extension(extension.DmenuRun(**dmenu_param))),
@@ -267,12 +267,12 @@ layouts = [
     # layout.Zoomy(),
 ]
 
-widget_defaults = dict(
-    font="sans",
-    fontsize=12,
-    padding=3,
-)
-extension_defaults = widget_defaults.copy()
+# widget_defaults = dict(
+#     font="Fira Code Medium",
+#     fontsize=15,
+#     padding=5,
+# )
+# extension_defaults = widget_defaults.copy()
 
 ######### Creating Widgets #########
 class Dunst(widget.base.ThreadPoolText):
@@ -359,6 +359,21 @@ screens = [
                         scale = 0.6
                         ),
 
+                widget.TextBox(
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[6],
+                        padding = 0,
+                        font = "Fira Code Medium",
+                        fontsize = 15
+                        ),
+
+                widget.Systray(
+                        background = colors[0],
+                        padding = 5,
+                        icon_size = 20
+                        ),
+                
                 widget.WindowName(
                         background=colors[0],
                         foreground = colors[6],
@@ -366,7 +381,7 @@ screens = [
                         format = "| {state} {name}",
                         font="Fira Code Medium",
                         fontsize=15,
-                        padding = 10
+                        padding = 5
                         ),
 
                 widget.Chord(
@@ -391,7 +406,7 @@ screens = [
                         font="Fira Code Medium",
                         fontsize=15,
                         interface="wlp1s0",
-                        format = '{down} ↓↑ {up}',
+                        format = '↓ {down} ↑ {up}',
                         foreground=colors[7],
                         background=colors[0],
                         padding=5
@@ -440,31 +455,6 @@ screens = [
                 #         format='  {load_percent}%',
                 #         padding = 5,
                 #         ),
-                widget.TextBox(
-                        fmt = "",
-                        font = 'FiraCode Nerd Font medium',
-                        fontsize = 15,
-                        background=colors[0],
-                        foreground=colors[5],
-                        # mouse_callbacks={'Button1': lambda: qtile.cmd_spawn("dm-wifi \
-                        #     -p '{0}' -fn '{1}' -nb '{2}' -nf '{3}' -sb '{4}' -sf '{5}'".format(
-                        #     dmenu_param["dmenu_prompt"],
-                        #     dmenu_param["dmenu_font"],
-                        #     dmenu_param["background"],
-                        #     dmenu_param["foreground"],
-                        #     dmenu_param["selected_background"],
-                        #     dmenu_param["selected_foreground"])
-                        #     )},
-                        margin=5
-                ),
-
-                # widget.TextBox(
-                #         text='/',
-                #         foreground=colors[3],
-                #         background=colors[0],
-                #         padding=0,
-                #         font="Fira Code Bold",
-                #         fontsize=37
                 #         ),
 
                 MyBattery(
@@ -516,15 +506,7 @@ screens = [
                 widget.Image(
                         filename='~/.config/qtile/icon/archicon.png',
                         background=colors[0],
-                        mouse_callbacks={'Button1': lambda: qtile.cmd_spawn("dm-logout \
-                            -p '{0}' -fn '{1}' -nb '{2}' -nf '{3}' -sb '{4}' -sf '{5}'".format(
-                            dmenu_param["dmenu_prompt"],
-                            dmenu_param["dmenu_font"],
-                            dmenu_param["background"],
-                            dmenu_param["foreground"],
-                            dmenu_param["selected_background"],
-                            dmenu_param["selected_foreground"])
-                            )},
+                        mouse_callbacks={'Button1': lambda: qtile.cmd_spawn("arcolinux-logout")},
                         margin=5
                 )
 
