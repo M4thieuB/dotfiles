@@ -12,6 +12,7 @@ Plug 'https://github.com/terryma/vim-multiple-cursors' "C-n for multiple cursor
 Plug 'https://github.com/preservim/tagbar' "Tagbar
 Plug 'https://github.com/ryanoasis/vim-devicons' " Developer Icons
 Plug 'https://github.com/rafi/awesome-vim-colorschemes' "Collection of themes
+Plug 'https://github.com/vim-airline/vim-airline-themes' "Collection of themes for airline
 
 
 call plug#end()
@@ -19,7 +20,9 @@ call plug#end()
 :set termguicolors
 :set t_Co=256
 
-:colorscheme iceberg
+"Theme
+:colorscheme dogrun
+let g:airline_theme='deus'
 
 "Raccourci pour lancer Tagbar
 nmap <F8> :TagbarToggle<CR>
