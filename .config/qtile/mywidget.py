@@ -371,32 +371,18 @@ class MyBattery(base.ThreadPoolText):
 # Modify the function, so now it notifies the user at each value of the list
 # notify_below instead at just one value.
         if len(self.notify_below) != 0:
+            self.notify_below.append(0)
             percent = int(status.percent * 100)
-            for i in range(len(self.notify_below)):
-                if i==len(self.notify_below)-1:
-                    if percent < self.notify_below[i]:
-                        if not self._has_notified[i]:
-                            send_notification(
-                                "Warning",
-                                "Battery at {0}%".format(self.notify_below[i]),
-                                urgent=True,
-                                timeout=self.timeout,
-                                )
-                            self._has_notified[i] = True
-                    elif self._has_notified[i]:
-                        self._has_notified[i] = False
-                else:
-                    if percent < self.notify_below[i] and percent > self.notify_below[i+1]:
-                        if not self._has_notified[i]:
-                            send_notification(
-                                "Warning",
-                                "Battery at {0}%".format(self.notify_below[i]),
-                                urgent=True,
-                                timeout=self.timeout,
-                                )
-                            self._has_notified[i] = True
-                    elif self._has_notified[i]:
-                        self._has_notified[i] = False
+            for i in range(len(self.notify_below)-1):
+                if percent < self.notify_below[i] and percent > self.notify_below[i+1]:
+                    if not self._has_notified[i]:
+                        send_notification(
+                            "Warning",
+                            "Battery at {0}%".format(percent),
+                            urgent=True,
+                            timeout=self.timeout,
+                            )
+                        self._has_notified[i] = True
 
         return self.build_string(status)
 

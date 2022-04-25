@@ -58,7 +58,9 @@ dmenu_param = dict(
     background = colors[0],
     foreground= colors[6],
     selected_background=colors[5],
-    selected_foreground=colors[0]
+    selected_foreground=colors[0],
+    borderwidth=2,
+    number_lines=10
 )
 
 
@@ -79,6 +81,13 @@ keys = [
                 Key([], "e", lazy.spawn("amixer -q sset Master 1%+")),
                 Key([], "p", lazy.spawn("pavucontrol"))],
                 mode=" Volume"
+                ),
+
+    KeyChord(   [mod], "b", [
+                # More precise brightness management
+                Key([], "a", lazy.spawn("brightnessctl set 5-")),
+                Key([], "e", lazy.spawn("brightnessctl set +5"))],
+                mode=" Brightness"
                 ),
 
     KeyChord(   [mod], "r", [
@@ -174,11 +183,20 @@ keys = [
     Key([mod], "f", lazy.window.toggle_fullscreen()),
 
     # Open dmenu
-    Key([mod], 'd', lazy.run_extension(extension.DmenuRun(**dmenu_param))),
+    Key([mod], 'd', lazy.spawn("dmenu_run -c -nb '{}' -nf '{}' -sb '{}' -sf '{}' -l {} -p '{}' -fn '{}' -bw {}".format(
+            dmenu_param['background'],
+            dmenu_param['foreground'],
+            dmenu_param['selected_background'],
+            dmenu_param['selected_foreground'],
+            dmenu_param['number_lines'],
+            dmenu_param['dmenu_prompt'],
+            dmenu_param['dmenu_font'],
+            dmenu_param['borderwidth']
+        ))),
 
     # Manage my screen's brightness
-    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 5-")),
-    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +5")),
+    Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10-")),
+    Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10")),
     ]
 
 
