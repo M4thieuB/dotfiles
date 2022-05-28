@@ -28,12 +28,13 @@ from typing import List  # noqa: F401
 import os
 import subprocess
 from libqtile import bar, layout, widget
-from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen
+from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen, DropDown, ScratchPad
 from libqtile.lazy import lazy
 from libqtile import hook
 from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile import qtile
+
 # Widget modifié
 from mywidget import MyBattery
 
@@ -49,7 +50,8 @@ colors = [  "#2e3440", # Background         1
             "#75d3ff", # Bleu un peu pétard 7
             "#b975e6", # Violet             8
             "#6cbeb5", # Cyan               9
-            "#c1c8d6"] # Bleu/Gris          10
+            "#c1c8d6", # Bleu/Gris          10
+            "#f5ebda"] # Blanc un peu gris  11
 
 
 dmenu_param = dict(
@@ -72,6 +74,9 @@ def start_once():
 
 
 keys = [
+
+
+
 
     ############### CHORDS ###############
 
@@ -125,6 +130,13 @@ keys = [
         #        Key([],"h", lazy.spawn("dunstctl history")) # Affiche l'historique des notif mais où? Bonne question, à travailler
                 ],
             mode=" Notification"
+            ),
+
+    KeyChord(   [mod], "e", [
+                # Spawn my emacsclient
+                Key([], "e", lazy.spawn('emacsclient -c -a "emacs"'), desc="Starting emacs"),
+                ],
+            mode=" Emacs"
             ),
 
 ############## KeyMap ################
@@ -197,6 +209,13 @@ keys = [
     # Manage my screen's brightness
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10-")),
     Key([], "XF86MonBrightnessUp", lazy.spawn("brightnessctl set +10")),
+
+
+
+    ############ SCRATCHPAD - DROPDOWN #######################
+    Key([mod, "control"], "p", lazy.group["sp1"].dropdown_toggle('term')),
+    Key([mod, "control"], "l", lazy.group["sp1"].dropdown_toggle('lang')),
+
     ]
 
 
@@ -253,6 +272,22 @@ for i in groups:
             #     desc="move focused window to group {}".format(i.name)),
         ]
     )
+
+scratch = [
+    ScratchPad(
+        "sp1",
+        [
+            # Drop a terminal
+            DropDown("term", "kitty",
+            x = 0.05, y = 0.6, width = 0.9, height = 0.4, opacity = 0.8),
+
+            # The goal is to drop a little window which displays a translator interface
+            DropDown("lang", "kitty",
+            x = 0.8, y = 0.8, width = 0.2, height = 0.2, opacity = 0.8),
+        ]
+    ),
+]
+groups += scratch
 
 
 def layout_defaults():
@@ -391,15 +426,33 @@ screens = [
                         padding = 5,
                         icon_size = 20
                         ),
+
+                widget.TextBox(
+                        text = "",
+                        background = colors[9],
+                        foreground = colors[0],
+                        padding = -6,
+                        font = "FiraCode Nerd Font Medium",
+                        fontsize = 45
+                        ),
                 
                 widget.WindowName(
-                        background=colors[0],
-                        foreground = colors[6],
+                        background=colors[9],
+                        foreground = colors[0],
                         empty_group_string='| ',
                         format = "| {state} {name}",
                         font="Fira Code Medium",
                         fontsize=15,
                         padding = 5
+                        ),
+
+                widget.TextBox(
+                        text = "",
+                        background = colors[0],
+                        foreground = colors[9],
+                        padding = -6,
+                        font = "FiraCode Nerd Font Medium",
+                        fontsize = 45
                         ),
 
                 widget.Chord(
@@ -420,15 +473,43 @@ screens = [
                         fontsize=37
                         ),
 
-                widget.Net(
-                        font="Fira Code Medium",
-                        fontsize=15,
-                        interface="wlp1s0",
-                        format = '↓ {down} ↑ {up}',
-                        foreground=colors[7],
-                        background=colors[0],
-                        padding=5
-                        ),
+                widget.DF(
+                    background = colors[0],
+                    font = "FiraCode Nerd Font Medium",
+                    fontsize = 15,
+                    foreground = colors[3],
+                    padding = 5,
+                    partition = '/',
+                    update_interval = 60,
+                    format = " {uf} {m}b ({r:.03}%)",
+                    measure = 'G',
+                    max_chars = 30,
+                    visible_on_warn = False
+                ),
+
+
+                # widget.HDDGraph(
+                #     background = colors[0],
+                #     border_color = colors[4],
+                #     border_width = 1,
+                #     graph_color = colors[5],
+                #     line_width = 2,
+                #     margin_x = 3,
+                #     margin_y = 3,
+                #     path = '/',
+                #     type = 'line',
+                #     space_type = 'used'
+                #     ),
+
+                # widget.Net(
+                #         font="Fira Code Medium",
+                #         fontsize=15,
+                #         interface="wlp1s0",
+                #         format = '↓ {down} ↑ {up}',
+                #         foreground=colors[7],
+                #         background=colors[0],
+                #         padding=5
+                #         ),
 
                 # widget.Sep(
                 #         background=colors[0],
@@ -439,7 +520,7 @@ screens = [
                 # ),
                 widget.TextBox(
                         text='/',
-                        foreground=colors[3],
+                        foreground=colors[4],
                         background=colors[0],
                         padding=0,
                         font="Fira Code Bold",
@@ -458,7 +539,7 @@ screens = [
 
                 widget.TextBox(
                         text='/',
-                        foreground=colors[3],
+                        foreground=colors[5],
                         background=colors[0],
                         padding=0,
                         font="Fira Code Bold",
@@ -496,7 +577,7 @@ screens = [
 
                 widget.TextBox(
                         text='/',
-                        foreground=colors[3],
+                        foreground=colors[6],
                         background=colors[0],
                         padding=0,
                         font="Fira Code Bold",
