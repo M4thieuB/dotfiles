@@ -18,7 +18,16 @@
 ;; - `doom-unicode-font' -- for unicode glyphs
 ;; - `doom-serif-font' -- for the `fixed-pitch-serif' face
 
-(setq doom-theme 'doom-one)
+;;(setq doom-theme 'doom-horizon)
+;;(setq doom-theme 'doom-Iovskem)
+;;(setq doom-theme 'doom-moonlight)
+;;(setq doom-theme 'doom-outrun-electric)
+;;(setq doom-theme 'doom-palenight)
+;;(setq doom-theme 'doom-snazzy)
+;;(setq doom-theme 'doom-one)
+(setq doom-theme 'doom-dracula)
+
+
 (setq doom-font (font-spec :family "mononoki Nerd Font Mono" :size 16)
       doom-variable-pitch-font (font-spec :family "mononoki Nerd Font Mono" :size 20)
       doom-big-font (font-spec :family "mononoki Nerd Font Mono" :size 24))

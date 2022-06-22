@@ -4,6 +4,7 @@ if status is-interactive
    fish_add_path -mP $HOME/.emacs.d/bin
    fish_add_path -mP $HOME/scripts
 
+
 # Defining handy aliases
    alias ll 'exa --icons -gal --group-directories-first'
    alias tree 'exa --icons -g --tree --group-directories-first'

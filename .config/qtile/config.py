@@ -24,9 +24,6 @@
 # OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 # SOFTWARE.
 
-from typing import List  # noqa: F401
-import os
-import subprocess
 from libqtile import bar, layout, widget
 from libqtile.config import Click, Drag, Group, Key, KeyChord, Match, Screen, DropDown, ScratchPad
 from libqtile.lazy import lazy
@@ -35,35 +32,27 @@ from libqtile.utils import guess_terminal
 from libqtile import extension
 from libqtile import qtile
 
+import os
+import subprocess
+from themes.dracula import colors
+from typing import List  # noqa: F401
 # Widget modifié
-from mywidget import MyBattery
+from mywidget import *
 
 mod = "mod4"
+myTerm = "kitty"
 
 
-colors = [  "#2e3440", # Background         1
-            "#f34a00", # Orange             2
-            "#b2c8d6", # Bleu moins clair   3
-            "#ff355b", # Rouge Rose         4
-            "#b6e875", # Vert clair         5
-            "#ffc150", # Jaune/Orange       6
-            "#75d3ff", # Bleu un peu pétard 7
-            "#b975e6", # Violet             8
-            "#6cbeb5", # Cyan               9
-            "#c1c8d6", # Bleu/Gris          10
-            "#f5ebda"] # Blanc un peu gris  11
-
-
-dmenu_param = dict(
-    dmenu_font = "Fira Code Medium-15",
-    dmenu_prompt=">",
-    background = colors[0],
-    foreground= colors[6],
-    selected_background=colors[5],
-    selected_foreground=colors[0],
-    borderwidth=2,
-    number_lines=10
-)
+# dmenu_param = dict(
+#     dmenu_font = "Fira Code Medium-15",
+#     dmenu_prompt=">",
+#     background = colors[0],
+#     foreground= colors[6],
+#     selected_background=colors[5],
+#     selected_foreground=colors[0],
+#     borderwidth=2,
+#     number_lines=10
+# )
 
 
 ########### Start applications at start ############
@@ -150,10 +139,10 @@ keys = [
 
 
     # Change the focus
-    Key([mod], "Up", lazy.layout.up()),
-    Key([mod], "Down", lazy.layout.down()),
-    Key([mod], "Left", lazy.layout.left()),
-    Key([mod], "Right", lazy.layout.right()),
+    Key([mod], "k", lazy.layout.up()),
+    Key([mod], "j", lazy.layout.down()),
+    Key([mod], "h", lazy.layout.left()),
+    Key([mod], "l", lazy.layout.right()),
 
     # A list of available commands that can be bound to keys can be found
     # at https://docs.qtile.org/en/latest/manual/config/lazy.html
@@ -181,7 +170,7 @@ keys = [
     Key(
         [mod],
         "Return",
-        lazy.spawn("kitty"),
+        lazy.spawn(myTerm),
         desc="Launch terminal"
         ),
 
@@ -195,16 +184,20 @@ keys = [
     Key([mod], "f", lazy.window.toggle_fullscreen()),
 
     # Open dmenu
-    Key([mod], 'd', lazy.spawn("dmenu_run -c -nb '{}' -nf '{}' -sb '{}' -sf '{}' -l {} -p '{}' -fn '{}' -bw {}".format(
-            dmenu_param['background'],
-            dmenu_param['foreground'],
-            dmenu_param['selected_background'],
-            dmenu_param['selected_foreground'],
-            dmenu_param['number_lines'],
-            dmenu_param['dmenu_prompt'],
-            dmenu_param['dmenu_font'],
-            dmenu_param['borderwidth']
-        ))),
+    # Key([mod], 'd', lazy.spawn("dmenu_run -c -nb '{}' -nf '{}' -sb '{}' -sf '{}' -l {} -p '{}' -fn '{}' -bw {}".format(
+    #         dmenu_param['background'],
+    #         dmenu_param['foreground'],
+    #         dmenu_param['selected_background'],
+    #         dmenu_param['selected_foreground'],
+    #         dmenu_param['number_lines'],
+    #         dmenu_param['dmenu_prompt'],
+    #         dmenu_param['dmenu_font'],
+    #         dmenu_param['borderwidth']
+    #     ))),
+
+    # Open Rofi
+    Key([mod], 'd', lazy.spawn("rofi -show run")),
+
 
     # Manage my screen's brightness
     Key([], "XF86MonBrightnessDown", lazy.spawn("brightnessctl set 10-")),
@@ -213,7 +206,6 @@ keys = [
 
 
     ############ SCRATCHPAD - DROPDOWN #######################
-    Key([mod, "control"], "p", lazy.group["sp1"].dropdown_toggle('term')),
     Key([mod, "control"], "l", lazy.group["sp1"].dropdown_toggle('lang')),
 
     ]
@@ -228,14 +220,14 @@ groups = []
 # FOR AZERTY KEYBOARDS
 group_names = ["ampersand", "eacute", "quotedbl", "apostrophe", "parenleft", "minus"] #, "egrave", "underscore", "ccedilla", "agrave" si jamais t'en veux plus
 
-group_labels = ["", "", "", "", "", ""]
+group_labels = ["doc", "dev", "www", "chat", "sys", "mail"]
 #group_labels = ["", "", "", "", "", "", "", "", "", "",]
 #group_labels = ["Web", "Edit/chat", "Image", "Gimp", "Meld", "Video", "Vb", "Files", "Mail", "Music",]
 
 group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
 #group_layouts = ["monadtall", "matrix", "monadtall", "bsp", "monadtall", "matrix", "monadtall", "bsp", "monadtall", "monadtall",]
 
-group_class = ["", "Atom","firefox","discord","",""]
+group_class = ["", "","firefox","discord","",""]
 
 for i in range(len(group_names)):
     groups.append(
@@ -277,13 +269,9 @@ scratch = [
     ScratchPad(
         "sp1",
         [
-            # Drop a terminal
-            DropDown("term", "kitty",
-            x = 0.05, y = 0.6, width = 0.9, height = 0.4, opacity = 0.8),
-
             # The goal is to drop a little window which displays a translator interface
-            DropDown("lang", "kitty",
-            x = 0.8, y = 0.8, width = 0.2, height = 0.2, opacity = 0.8),
+            DropDown("lang", "kitty python /home/math/Documents/Dev_project/Translator/translate.py", on_focus_lost_hide = False,
+                     x = 0.3, y = 0.3, width = 0.4, height = 0.4, opacity = 1),
         ]
     ),
 ]
@@ -292,16 +280,16 @@ groups += scratch
 
 def layout_defaults():
     return dict(
-        border_focus=colors[5],
+        border_focus=colors[16],
         border_normal=colors[0],
         border_width=2,
-        margin = 6
+        margin = 15
         )
 
 layout_theme = layout_defaults()
 
 layouts = [
-    layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
+    # layout.Columns(border_focus_stack=["#d75f5f", "#8f3d3d"], border_width=4),
     layout.Max(),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
@@ -364,50 +352,59 @@ screens = [
                         fmt="{}",                       # How to format the text
                         font="FiraCode Nerd Font",      # Default font
                         fontsize=15,                    # Font size. Calculated if None.
-                        foreground=colors[5],           # Foreground colour
+                        foreground=colors[15],           # Foreground colour
                         format="{state}",               # How to format the text.
                         padding=5,                      # Padding. Calculated if None.
                         ),
 
                 widget.TextBox(
-                        text='|',
-                        foreground=colors[6],
-                        background=colors[0],
-                        padding=0,
-                        font="Fira Code Bold",
-                        fontsize=15
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
                         ),
 
                 widget.GroupBox(
                         borderwidth=2,
                         center_aligned = True,
-                        active = colors[5],
-                        inactive = colors[0],
-                        this_current_screen_border = colors[5],
-                        block_highlight_text_color = colors[0],
-                        urgent_border = colors[3],
-                        urgent_text = colors[0],
+                        active = colors[4],
+                        inactive = colors[3],
+                        this_current_screen_border = colors[6],
+                        block_highlight_text_color = colors[6],
+                        urgent_border = colors[0],
+                        urgent_text = colors[7],
                         hide_unused = False,
                         foreground = colors[5],
                         background = colors[0],
                         spacing = 2,
-                        highlight_method = 'block',
-                        highlight_color = None,
+                        highlight_method = 'line',
+                        highlight_color = colors[0],
                         rounded = True,
                         margin_x = 5,
                         margin_y = 3,
-                        padding_x = 10,
+                        padding_x = 3,
                         padding_y = 5,
                         font = "FiraCode Nerd Font",
                         fontsize = 15
                         ),
 
-                widget.CurrentLayoutIcon(
+                widget.TextBox(
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
+                        ),
+
+                widget.CurrentLayout(
                         fmt='{}',
                         background=colors[0],
-                        foreground=colors[2],
+                        foreground=colors[7],
                         font="Fira Code Medium",
-                        fontsize=13,
+                        fontsize=15,
                         padding=5,
                         scale = 0.6
                         ),
@@ -415,8 +412,8 @@ screens = [
                 widget.TextBox(
                         text = '|',
                         background = colors[0],
-                        foreground = colors[6],
-                        padding = 0,
+                        foreground = colors[10],
+                        padding = 5,
                         font = "Fira Code Medium",
                         fontsize = 15
                         ),
@@ -428,36 +425,27 @@ screens = [
                         ),
 
                 widget.TextBox(
-                        text = "",
-                        background = colors[9],
-                        foreground = colors[0],
-                        padding = -6,
-                        font = "FiraCode Nerd Font Medium",
-                        fontsize = 45
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
                         ),
-                
+
                 widget.WindowName(
-                        background=colors[9],
-                        foreground = colors[0],
-                        empty_group_string='| ',
-                        format = "| {state} {name}",
+                        background=colors[0],
+                        foreground = colors[17],
+                        empty_group_string='',
+                        format = "{state} {name}",
                         font="Fira Code Medium",
                         fontsize=15,
                         padding = 5
                         ),
 
-                widget.TextBox(
-                        text = "",
-                        background = colors[0],
-                        foreground = colors[9],
-                        padding = -6,
-                        font = "FiraCode Nerd Font Medium",
-                        fontsize = 45
-                        ),
-
                 widget.Chord(
                         background = colors[0],
-                        foreground = colors[9],
+                        foreground = colors[15],
                         fmt = '{}',
                         fontsize = 15,
                         font = "FiraCode Nerd Font Medium",
@@ -465,12 +453,29 @@ screens = [
                         ),
 
                 widget.TextBox(
-                        text='/',
-                        foreground=colors[3],
-                        background=colors[0],
-                        padding=0,
-                        font="Fira Code Bold",
-                        fontsize=37
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
+                        ),
+
+                widget.CPU(
+                    background = colors[0],
+                    foreground = colors[13],
+                    font = "Fira Code Medium",
+                    fontsize = 15,
+                    format = " cpu: ({load_percent}%)",
+                ),
+
+                widget.TextBox(
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
                         ),
 
                 widget.DF(
@@ -481,12 +486,41 @@ screens = [
                     padding = 5,
                     partition = '/',
                     update_interval = 60,
-                    format = " {uf} {m}b ({r:.03}%)",
+                    format = " {uf} {m}b free", #({r:.03}%)",
                     measure = 'G',
                     max_chars = 30,
                     visible_on_warn = False
                 ),
 
+                # MyIPWidget(
+                #     background = colors[0],
+                #     foreground = colors[5],
+                #     font = "Fira Code Medium",
+                #     fontsize = 15,
+                #     format = "IP (private): {i}",
+                #     padding = 5,
+                #     interface = "wlp1s0"
+                # ),
+
+                widget.TextBox(
+                    text = '|',
+                    background = colors[0],
+                    foreground = colors[10],
+                    padding = 5,
+                    font = "Fira Code Medium",
+                    fontsize = 15
+                ),
+
+
+                widget.GenPollUrl(
+                    background = colors[0],
+                    foreground = colors[7],
+                    font = "Fira Code Medium",
+                    fontsize = 15,
+                    update_interval = 600,
+                    url = "https://api.ipify.org?format=json",
+                    parse = lambda x: f"ip: {x['ip']}"
+                ),
 
                 # widget.HDDGraph(
                 #     background = colors[0],
@@ -519,13 +553,14 @@ screens = [
                 #         size_percent=60
                 # ),
                 widget.TextBox(
-                        text='/',
-                        foreground=colors[4],
-                        background=colors[0],
-                        padding=0,
-                        font="Fira Code Bold",
-                        fontsize=37
-                        ),
+                    text = '|',
+                    background = colors[0],
+                    foreground = colors[10],
+                    padding = 5,
+                    font = "Fira Code Medium",
+                    fontsize = 15
+                    ),
+
 
                 widget.Volume(
                         background=colors[0],
@@ -538,13 +573,14 @@ screens = [
                         ),
 
                 widget.TextBox(
-                        text='/',
-                        foreground=colors[5],
-                        background=colors[0],
-                        padding=0,
-                        font="Fira Code Bold",
-                        fontsize=37
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
                         ),
+
 
                 # widget.CPU(
                 #         background=colors[0],
@@ -576,16 +612,18 @@ screens = [
                         ),
 
                 widget.TextBox(
-                        text='/',
-                        foreground=colors[6],
-                        background=colors[0],
-                        padding=0,
-                        font="Fira Code Bold",
-                        fontsize=37
+                        text = '|',
+                        background = colors[0],
+                        foreground = colors[10],
+                        padding = 5,
+                        font = "Fira Code Medium",
+                        fontsize = 15
                         ),
 
+
+
                 widget.TextBox(
-                        text=' ',
+                        text=' ',
                         foreground=colors[6],
                         background=colors[0],
                         padding=0,
@@ -596,23 +634,15 @@ screens = [
                 widget.Clock(
                         font="Fira Code Medium",
                         fontsize=15,
-                        format="%H:%M   %A %d %B",
+                        format="%A %d %B (%H:%M)",
                         background=colors[0],
                         foreground=colors[6],
                         padding = 5
                         ),
-
-                widget.Image(
-                        filename='~/.config/qtile/icon/archicon.png',
-                        background=colors[0],
-                        mouse_callbacks={'Button1': lambda: qtile.cmd_spawn("arcolinux-logout")},
-                        margin=5
-                )
-
             ],
             30,
-            opacity = 0.8,
-            margin = 8,
+            opacity = 1,
+            margin = 0,
             # border_width=[6, 0, 0, 0],  # Draw top and bottom borders
             # border_color=["ff00ff", "000000", "#BF363A" , "000000"]  # Borders are magenta
         ),

@@ -34,6 +34,7 @@ from __future__ import annotations
 import os
 import platform
 import re
+import subprocess
 import warnings
 from abc import ABC, abstractclassmethod
 from enum import Enum, unique
@@ -541,3 +542,59 @@ class BatteryIcon(base._Widget):
         elif state == BatteryState.FULL:
             key += "-charged"
         return key
+
+
+
+class MyIPWidget(base.ThreadPoolText):
+    """
+        Widget that displays the current private IP address
+    """
+
+    defaults = [
+        ("background",  "000000",   "Defines the background color of the widget"),
+        ("foreground",  "ffffff",   "Defines the foreground color of the widget"),
+        ("font",        "sans",     "Defines the font used by the text of the widget"),
+        ("fontsize",    15,         "Defines the size of the font"),
+        ("format",      "IP: {i}",  "String format (i: current IP address)"),
+        ("padding",     0,          "Defines the padding used"),
+        # ("interface",   "",         "Defines the name of the interface used. It will be used for looking the IP address (- ip route -)")
+    ]
+
+    def __init__(self, **config):
+        super().__init__("", **config)
+        self.add_defaults(MyIPWidget.defaults)
+
+
+    # def find_ip(self):
+    #     def index_pattern(pat, string):
+    #         """
+    #             Return the last appearance of the pattern in the string
+    #         """
+    #         index = []
+    #         for i in range(len(string) - len(pat)):
+    #             if pat == string[i:i+len(pat)]:
+    #                 index.append(i)
+    #         return index[-1]
+
+    #     output = subprocess.check_output(["ip", "route"]).decode().strip()
+    #     index = index_pattern(self.interface, output)
+
+    #     if index != []:
+    #         output = output[index:]
+    #         ips = re.findall("\d+\.\d+\.\d+\.\d+", output)
+    #         return ips
+    #     else:
+    #         return "IP not found"
+
+
+    def poll(self):
+        output = subprocess.check_output(["ip", "route"]).decode().strip()
+        address = re.findall("\d+\.\d+\.\d+\.\d+", output)[-1]
+        return self.format.format(i=address)
+        # address = self.find_ip()
+
+        # if isinstance(address,list):
+        #     text = self.format.format(i = address[-1])
+        # else:
+        #     text = "Error..."
+        # return text
