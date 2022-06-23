@@ -178,7 +178,7 @@ keys = [
     Key([mod], "Tab", lazy.next_layout(), desc="Toggle between layouts"),
     Key([mod], "q", lazy.window.kill(), desc="Kill focused window"),
     Key([mod, "control"], "r", lazy.reload_config(), desc="Reload the config"),
-    Key([mod, "control"], "q", lazy.spawn("arcolinux-logout"), desc="Shutdown Qtile"),
+    Key([mod, "control"], "q", lazy.spawn("archlinux-logout"), desc="Shutdown Qtile"),
 
     # Toggle fullscreen
     Key([mod], "f", lazy.window.toggle_fullscreen()),
@@ -270,7 +270,7 @@ scratch = [
         "sp1",
         [
             # The goal is to drop a little window which displays a translator interface
-            DropDown("lang", "kitty python /home/math/Documents/Dev_project/Translator/translate.py", on_focus_lost_hide = False,
+            DropDown("lang", "kitty python /home/math/Documents/Dev/Translator/translate.py", on_focus_lost_hide = False,
                      x = 0.3, y = 0.3, width = 0.4, height = 0.4, opacity = 1),
         ]
     ),
