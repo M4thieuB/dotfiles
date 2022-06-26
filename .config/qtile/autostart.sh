@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Launch picom
-picom --experimental-backends &
+picom --experimental-backends --animations &
 
 numlockx on 
 

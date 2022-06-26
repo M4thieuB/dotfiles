@@ -4,6 +4,7 @@ if status is-interactive
    fish_add_path -mP $HOME/.emacs.d/bin
    fish_add_path -mP $HOME/.local/bin
    # fish_add_path -mP $HOME/Documents/scripts
+   set -gx MANPAGER "sh -c 'col -bx | bat -l man -p'"
 
 
 # Defining handy aliases
@@ -23,4 +24,8 @@ if status is-interactive
    alias rm 'rm -i'
 
 
+end
+
+function fish_greeting
+	pokemon-colorscripts -r
 end
