@@ -1,0 +1,48 @@
+#! /bin/sh
+
+#
+# Autostart
+#
+
+# Starting sxhkd which manages the keybindings
+pgrep -x sxhkd > /dev/null || sxhkd &
+# Wallpaper manager
+# nitrogen --restore &
+
+# Wallpaper manager
+$HOME/.fehbg &
+
+# Starting picom
+picom --experimental-backends --animations &
+# Active the numlock key on startup
+numlockx on
+# Starting the notification manager
+dunst -conf ~/.config/dunst/dunstrc &
+# Starting the polybar
+$HOME/.config/polybar/launch.sh
+# Starting the emacs daemon
+/usr/bin/emacs --daemon
+# Starring the wifi manager
+nm-applet &
+
+#
+# bspwm config
+#
+
+bspc monitor eDP-1 -d 'dev' 'doc' 'www' 'chat' 'mail' 'sys'
+
+bspc config border_width          2
+bspc config window_gap            15
+bspc config top_padding           40
+bspc config bottom_padding        0
+bspc config left_padding          0
+bspc config right_padding         0
+bspc config focus_follows_pointer true
+
+bspc config split_ratio          0.50
+bspc config borderless_monocle   false
+bspc config gapless_monocle      true
+
+bspc rule -a firefox desktop='^3' follow=off
+bspc rule -a discord desktop='^4' follow=off
+bspc rule -a Emacs state=tiled focus=on follow=on manage=on

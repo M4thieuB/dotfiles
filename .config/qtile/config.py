@@ -86,27 +86,27 @@ keys = [
 
     KeyChord(   [mod], "r", [
                 # Resize windows
-                Key([],"Right",
+                Key([],"l",
                     lazy.layout.grow_right(),
                     lazy.layout.grow(),
                     lazy.layout.increase_ratio(),
                     lazy.layout.delete(),
                     ),
 
-                Key([],"Left",
+                Key([],"h",
                     lazy.layout.grow_left(),
                     lazy.layout.shrink(),
                     lazy.layout.decrease_ratio(),
                     lazy.layout.add(),
                     ),
 
-                Key([],"Up",
+                Key([],"k",
                     lazy.layout.grow_up(),
                     lazy.layout.grow(),
                     lazy.layout.decrease_nmaster(),
                     ),
 
-                Key([],"Down",
+                Key([],"j",
                     lazy.layout.grow_down(),
                     lazy.layout.shrink(),
                     lazy.layout.increase_nmaster(),
@@ -224,7 +224,7 @@ group_labels = ["doc", "dev", "www", "chat", "sys", "mail"]
 #group_labels = ["", "", "", "", "", "", "", "", "", "",]
 #group_labels = ["Web", "Edit/chat", "Image", "Gimp", "Meld", "Video", "Vb", "Files", "Mail", "Music",]
 
-group_layouts = ["monadtall", "monadtall", "monadtall", "monadtall", "monadtall", "monadtall"]
+group_layouts = ["bsp"]*len(group_names)
 #group_layouts = ["monadtall", "matrix", "monadtall", "bsp", "monadtall", "matrix", "monadtall", "bsp", "monadtall", "monadtall",]
 
 group_class = ["", "","firefox","discord","",""]
@@ -283,7 +283,7 @@ def layout_defaults():
         border_focus=colors[16],
         border_normal=colors[0],
         border_width=2,
-        margin = 15
+        margin = 10
         )
 
 layout_theme = layout_defaults()
@@ -293,13 +293,24 @@ layouts = [
     layout.Max(),
     # Try more layouts by unleashing below layouts.
     # layout.Stack(num_stacks=2),
-    # layout.Bsp(),
+    layout.Bsp (
+        lower_right=True,
+        border_on_single=True,
+        fair=False,
+        **layout_theme
+    ),
     # layout.Matrix(),
     layout.MonadTall(
             **layout_theme
     ),
     layout.MonadWide(
             **layout_theme
+    ),
+    layout.MonadThreeCol(
+        **layout_theme
+    ),
+    layout.Spiral(
+        **layout_theme
     ),
     # layout.RatioTile(),
     # layout.Tile(),
@@ -372,15 +383,16 @@ screens = [
                         active = colors[4],
                         inactive = colors[3],
                         this_current_screen_border = colors[6],
+                        this_screen_border = colors[4],
                         block_highlight_text_color = colors[6],
-                        urgent_border = colors[0],
+                        urgent_border = colors[7],
                         urgent_text = colors[7],
                         hide_unused = False,
-                        foreground = colors[5],
+                        foreground = colors[6],
                         background = colors[0],
                         spacing = 2,
                         highlight_method = 'line',
-                        highlight_color = colors[0],
+                        highlight_color = [colors[0]],
                         rounded = True,
                         margin_x = 5,
                         margin_y = 3,
