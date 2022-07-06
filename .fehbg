@@ -1,2 +1,2 @@
 #!/bin/sh
-feh --bg-scale --no-fehbg --randomize $HOME/Documents/wallpapers/*
+feh --no-fehbg --bg-max --randomize $HOME/Documents/wallpapers/*
