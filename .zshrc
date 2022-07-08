@@ -26,8 +26,8 @@ alias rm="rm -i"
 # alias emacs="emacsclient -c -a 'emacs'"
 
 # changes the editor in the terminal, to edit long commands.
-export EDITOR='emacsclient -nw -c -a "emacs"'
-export VISAL='emacsclient -nw -c -a "emacs"'
+export EDITOR='nvim'
+export VISAL='nvim'
 
 export QT_QPA_PLATFORMTHEME=qt5ct
 
