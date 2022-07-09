@@ -55,6 +55,15 @@ ctrl + XF86MonBrightnessDown
 ctrl + XF86MonBrightnessUp
   brightnessctl set +5
 
+
+
+####### Scratchpad ########
+super + ctrl + t
+  tdrop -a -h 50% -w 50% -x 25% -y 25%  kitty math-translate
+###########################
+
+
+
 #
 # bspwm hotkeys
 #
@@ -148,7 +157,7 @@ super + alt + {h,j,k,l}
 #	bspc node -o 0.{1-9}
 
 # azerty keyboard
-super + alt + {ampersand,eacute,quotedbl,apostrophe,parenleft,minus}
+super + alt + {ampersand,eacute,quotedbl,apostrophe,parenleft,minus,eagrave,underscore,ccedilla}
   bspc node -o 0.{1-9}
 
 # cancel the preselection for the focused node

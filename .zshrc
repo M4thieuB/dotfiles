@@ -32,7 +32,7 @@ export VISAL='nvim'
 export QT_QPA_PLATFORMTHEME=qt5ct
 
 # PATH CONFIG
-export PATH="$HOME/.local/bin:$HOME/.emacs.d/bin:$PATH"
+export PATH="$HOME/.config/scripts:$HOME/.local/bin:$HOME/.emacs.d/bin:$PATH"
 
 ### "bat" as manpager
 export MANPAGER="sh -c 'col -bx | bat -l man -p'"
