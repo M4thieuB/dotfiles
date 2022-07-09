@@ -6,27 +6,7 @@
 
 # Starting sxhkd which manages the keybindings
 pgrep -x sxhkd > /dev/null || sxhkd &
-# Wallpaper manager
-# nitrogen --restore &
-
-# Wallpaper manager
-$HOME/.fehbg &
-
-# Starting picom
-picom --experimental-backends --animations &
-# Active the numlock key on startup
-numlockx on
-# Starting the notification manager
-dunst -conf ~/.config/dunst/dunstrc &
-# Starting the polybar
-$HOME/.config/polybar/launch.sh
-# Starting the emacs daemon
-/usr/bin/emacs --daemon
-# Starring the wifi manager
-nm-applet &
-# Starting the bluetooth manager
-blueman-applet &
-
+bash "$HOME/.config/bspwm/autostart.sh"
 
 
 #
@@ -62,3 +42,5 @@ bspc config ignore_ewmh_focus true
 bspc config focused_border_color "#9aedfe"
 bspc config normal_border_color "#32344a"
 bspc config active_border_color "#282a36"
+
+

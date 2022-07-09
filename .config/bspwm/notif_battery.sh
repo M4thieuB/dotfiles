@@ -31,7 +31,7 @@ usage () {
 }
 
 notify () {
-    dunstify -t 4000 -i "$battery_20_icon" -a "System" "Careful" "Battery level: $1%"
+    dunstify -u CRITICAL -i "$battery_20_icon" -a "System" "Careful" "Battery level: $1%"
 }
 
 battery_20_icon="/usr/share/icons/Papirus-Dark/symbolic/status/battery-level-20-symbolic.svg"
