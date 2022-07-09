@@ -1,0 +1,3 @@
+path="$HOME/Documents/dev/translator/translate.py"
+
+python3 "$path"
